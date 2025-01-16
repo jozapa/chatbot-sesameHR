@@ -62,7 +62,7 @@ def main_not_stream():
 
 
 if __name__ == "__main__":
-    streaming = True
+    streaming = False
     if streaming:
         asyncio.run(main_stream())
     else:

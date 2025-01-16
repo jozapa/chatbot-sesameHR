@@ -9,6 +9,7 @@ class ChatbotService:
 
     class State(MessagesState):
         summary: str
+        is_first_state: bool
 
     def __init__(self):
        self.llm = ChatOpenAI()
@@ -75,15 +76,8 @@ class ChatbotService:
             state["messages"] = [initial_message] + state["messages"]
             state["is_first_state"] = False
 
-        summary = state.get("summary", "")
-        #print(summary, "Aaaaaaaaaaaa")
-
-        if summary:
-            system_message = f'Summary of the conversation earlier: {summary}'
-
-            messages = [SystemMessage(content=system_message)] + state["messages"]
-        else: 
-            messages = state["messages"]
+        
+        messages = state["messages"]
 
         response = self.llm.invoke(messages, config)
         return {"messages": response}
@@ -92,6 +86,7 @@ class ChatbotService:
         is_first_state = state.get("is_first_state", True)
         #print(is_first_state)
         if is_first_state:
+            print("entra")
             initial_message = SystemMessage(content="Eres SesameBot, un asistente virtual diseñado para responder preguntas generales de forma amigable.\n"
                 "Respondes en español por defecto, a menos que el input esté en inglés. En ese caso, respondes en inglés.\n"
                 "No tienes acceso a internet, por lo que basas tus respuestas únicamente en tu conocimiento.\n"
@@ -101,15 +96,7 @@ class ChatbotService:
             state["messages"] = [initial_message] + state["messages"]
             state["is_first_state"] = False
 
-        summary = state.get("summary", "")
-        #print(summary, "Aaaaaaaaaaaa")
-
-        if summary:
-            system_message = f'Summary of the conversation earlier: {summary}'
-
-            messages = [SystemMessage(content=system_message)] + state["messages"]
-        else: 
-            messages = state["messages"]
+        messages = state["messages"]
 
         response = self.llm.invoke(messages)
         return {"messages": response}
@@ -117,10 +104,9 @@ class ChatbotService:
     def _summarize(self, state: State):
 
         summary = state.get("summary", "")
-
         if summary:
             #print(summary, "DEBERIA ENTRAR AQUI EN ALGUN MOMENTO")
-            #print("entra en summary")
+            print("entra en summary")
             summary_messge = (
                 f"This the summary of the last conversations: {summary}\n\n"
                 "Your mission is to create a summary by takig account the new messages above and the previous summary:\n"
