@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph, END
 
-from const.prompts import LAST_CONVERSATIONS_MSG, INITIAL_MSG_FIRST_STATE_TRUE
+from prompts.chatbot_prompts import LAST_CONVERSATIONS_MSG, INITIAL_MSG_FIRST_STATE_TRUE
 from services.memory import MemoryService
 
 
@@ -24,7 +24,7 @@ class ChatbotService:
         # TODO: Docstrings
         builder = StateGraph(ChatbotService.State)
 
-        builder.add_node("chatbot", self._call_model_stream)
+        builder.add_node("chatbot", self._call_model)
         builder.add_node(self._summarize)
 
         builder.add_edge(START, "chatbot")
@@ -34,7 +34,7 @@ class ChatbotService:
 
         return react_graph
 
-    def _call_model_stream(self, state: State, config: RunnableConfig):
+    def _call_model(self, state: State):
         # TODO: Docstrings
         is_first_state = state.get("is_first_state", True)
         if is_first_state:
@@ -43,21 +43,14 @@ class ChatbotService:
             state["messages"] = [initial_message] + state["messages"]
             state["is_first_state"] = False
 
-        messages = state["messages"]
-        response = self.llm.invoke(messages, config)
+        summary = state.get("summary", "")
 
-        return {"messages": response}
+        if summary:
+            system_message = f'Summary of the conversation earlier: {summary}'
+            messages = [SystemMessage(content=system_message)] + state["messages"]
+        else:
+            messages = state["messages"]
 
-    def _call_model_not_stream(self, state: State):
-        # TODO: Docstrings
-        is_first_state = state.get("is_first_state", True)
-        if is_first_state:
-            initial_message = SystemMessage(content=INITIAL_MSG_FIRST_STATE_TRUE)
-
-            state["messages"] = [initial_message] + state["messages"]
-            state["is_first_state"] = False
-
-        messages = state["messages"]
         response = self.llm.invoke(messages)
 
         return {"messages": response}
