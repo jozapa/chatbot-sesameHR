@@ -7,6 +7,16 @@ from pydantic import BaseModel
 #from services.memory import MemoryService
 from api.chat import Assistant
 
+#Load the OpenAI api key
+load_dotenv()
+
+#Initialize the assistant.
+assistant = Assistant()
+
+#Initialize the FastAPI app.
+app = FastAPI()
+
+
 class UserInput(BaseModel):
     """
     Represents the structure of a user message sent to the chat API
@@ -19,15 +29,6 @@ class AssistantResponse(BaseModel):
     Represents the structure of the assistant´s response send back to the client (user)
     """
     assistant: str
-
-
-load_dotenv()
-
-#Initialize the assistant.
-assistant = Assistant()
-
-#Initialize the FastAPI app.
-app = FastAPI()
 
 
 def get_assistant() -> Assistant:
