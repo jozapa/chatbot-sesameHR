@@ -69,7 +69,7 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
    ```bash
    pip install -r requirements.txt
    ```
-5. Create a `.env` in the `src` folder with the `OPENAI_API_KEY`
+5. Create a `.env` in the `src` folder with the `OPENAI_API_KEY = "" `
 
 ### **Docker installation**
 1. Install Docker
@@ -127,8 +127,8 @@ You will get this response:
 I added tests to validate the functionality of the `/chat` and `/health`API endpoints in the FastAPI application. The tests ensure that the AI assistant behaves as expected under various conditions, including valid and invalid inputs.
 
 ### **How to execute the tests**
-1. Go to the src folder
-2. For test the tests use:
+1. Go to the `src` folder
+2. For run the tests use:
 ```bash
   pytest test -v
    ``` 
