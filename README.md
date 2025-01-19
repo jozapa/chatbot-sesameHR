@@ -54,22 +54,19 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
 # 🛠️ Installation Instructions  
 
 ### **Local Installation**
-1. Clone the repository and switch the branch to feature/add_chatbot:  
-   ```bash
-   git clone https://github.com/jozapa/chatbot-sesameHR.git
-   ```
-2. Create a virtual environment with python 3.10 
+
+1. Create a virtual environment with python 3.10 
 - **Virtual environment documentation**: https://docs.python.org/3/library/venv.html
 
-3. Go to the project folder:
+2. Go to the project folder:
    ```bash
    cd chatbot-sesameHR
    ```
-4. Install dependencies:  
+3. Install dependencies:  
    ```bash
    pip install -r requirements.txt
    ```
-5. Create a `.env` in the `src` folder with the `OPENAI_API_KEY = "" `
+4. Create a `.env` in the `src` folder with the `OPENAI_API_KEY = "" `
 
 ### **Docker installation**
 1. Install Docker
@@ -86,14 +83,21 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
 # ▶️ **How to Execute the Project**  
 
 ### **Local Execution**
-1. Go to src folder:  
+1. Go to `src` folder:  
    ```bash
    cd src
    ```
-2. Execute:
+2. Execute in a terminal the uvicorn server:
   ```bash
-   python api/main.py
+    python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
   ```
+
+
+3. Excecute in a terminal inside the `src`folder:
+```bash
+   python api/main.py
+```
+
 3. Use the cmd to interact with the bot:
 
 -**Post example**:
