@@ -2,9 +2,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
-
-#from services.chatbot import ChatbotService
-#from services.memory import MemoryService
 from api.chat import Assistant
 
 #Load the OpenAI api key

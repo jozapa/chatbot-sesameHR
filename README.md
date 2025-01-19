@@ -58,9 +58,9 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
 1. Create a virtual environment with python 3.10 
 - **Virtual environment documentation**: https://docs.python.org/3/library/venv.html
 
-2. Go to the project folder:
+2. Go to the `src` folder:
    ```bash
-   cd chatbot-sesameHR
+   cd src
    ```
 3. Install dependencies:  
    ```bash
@@ -74,7 +74,7 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
 
 2. Create a `.env` in the `src` folder with the `OPENAI_API_KEY = "" `
 
-2. Build the docker Image:  
+3. In the root folder, build the docker Image:  
    ```bash
    docker build -t sesamebot .
    ```
@@ -100,7 +100,7 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
 
 3. Use the cmd to interact with the bot:
 
--**Post example**:
+**Post example**:
    ```cURL
    curl --location 'http://localhost:8000/chat' \
 --header 'Content-Type: application/json' \
@@ -112,14 +112,14 @@ You will get a response similar to:
 ```cURL
 {"assistant":"¡Hola de nuevo! ¿Cómo puedo asistirte hoy?"}
 ```
--**Get example**:
+**Get example**:
    ```cURL
 curl --location 'http://localhost:8000/health' 
    ```
 You will get this response:
 {"health":"healthy"}
 ### **Docker execution**
-1.  Make sure you have the `Docker Installation` step image installed.
+1.  Make sure you have the imaged installed.
 2.  Run the image:
 ```bash
   docker run -p 8000:8000 sesamebot
