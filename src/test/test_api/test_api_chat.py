@@ -22,6 +22,11 @@ def test_hello_assistant():
     assert "assistant" in response_json
     assert "hola" in response_json["assistant"].lower()
 
+def test_identity_chatbot():
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, quien eres?"})
+    response_json = response.json()
+    assert "sesame" in response_json["assistant"].lower()
+
 
 def test_check_memory():
     """
@@ -58,13 +63,13 @@ def test_check_memory_summary():
     response.raise_for_status()
     response = requests.post(CHAT_ENDPOINT, json={"user": "Mi abuela se llama Tomasa"})
     response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Cuánto es 2+2"})
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Mi tía se llama pepa"})
     response.raise_for_status()
     response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, como me llamo? Como se llama mi abuela"
-                                                          "y cuanto da la suma anterior?"})
+                                                          "Y como se llama mi tía?"})
     response_json = response.json()
     assert "assistant" in response_json
-    assert "4" in response_json["assistant"] or "cuatro" and "Jose" and "Tomasa" in response_json["assistant"].lower()
+    assert "pepa" and "Jose" and "Tomasa" in response_json["assistant"].lower()
 
 
 
