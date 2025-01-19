@@ -137,6 +137,77 @@ I added tests to validate the functionality of the `/chat` and `/health`API endp
   pytest test -v
    ``` 
 # 🚀 **Next Steps**  
+## Adding streaming implementation
 
+Since there has not been time to implement streaming together with the api I put here the code to perform token to token streaming.
+To do token to token streaming, a `RunnableConfig` must be added when invoking the model. Then when calling the model to generate a response, we must use `astream_events`
+```python
+#RunnableConfig is needed for streaming token
+from langchain_core.runnables import RunnableConfig
+
+    def _call_model(self, state: State, config: RunnableConfig): #Adding the runnable config to stream mode
+        """
+        Invokes the language model to process the current conversation state.
+        :param state: the current conversation state.
+        :return: Updated state containing whether it's the first state and the new messages from the model.
+        """
+
+        is_first_state = state.get("is_first_state", True)
+        if is_first_state:
+            initial_message = SystemMessage(content=INITIAL_MSG_FIRST_STATE_TRUE)
+
+            state["messages"] = [initial_message] + state["messages"]
+            state["is_first_state"] = False
+
+        summary = state.get("summary", "")
+
+        if summary:
+            system_message = f'Summary of the conversation earlier: {summary}'
+            messages = [SystemMessage(content=system_message)] + state["messages"]
+        else:
+            messages = state["messages"]
+
+        response = self.llm.invoke(messages, config) #passing runnable config to the invoke method
+
+        return {"is_first_state": True, "messages": response}
+
+    def generate_response(self, user_message: str) -> str:
+        """
+        Generate the response for a given response.
+
+        The method takes a user message as an input, uses the react graph for performing the stream token to token
+        mode and filters the message with the metadata.
+
+        :param user_message: the input message from the user
+        :return: the AI streamed response from the assistant and the metadata
+        """
+        
+        input_message = HumanMessage(content=user_message)
+        async for event in self.react_graph.astream_events(
+           {"messages": [input_message]},
+           self.memory_service_config,
+           version="v2"
+        ):
+            if event["event"] == "on_chat_model_stream" and event['metadata'].get('langgraph_node','') == "chatbot":
+               print(event["data"])
+        
+```
+The output of `generate_response` will have this structure:
+```log
+   Tú: hola
+{'chunk': AIMessageChunk(content='', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='¡', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='Hola', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='!', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content=' ¿', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='En', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content=' qué', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content=' puedo', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content=' ayud', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='arte', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content=' hoy', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='?', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+{'chunk': AIMessageChunk(content='', additional_kwargs={}, response_metadata={'finish_reason': 'stop', 'model_name': 'gpt-3.5-turbo-0125'}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
+```
 
 
