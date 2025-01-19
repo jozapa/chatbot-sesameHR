@@ -39,21 +39,6 @@ def test_check_memory():
     assert "assistant" in response_json
     assert "Jose" in response_json["assistant"]
 
-
-def test_check_memory_summary():
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, me llamo Josep"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Mi abuela se llama Tomasa"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Cuánto es 2+2"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, como me llamo? Como se llama mi abuela"
-                                                          "y cuanto da la suma anterior?"})
-
-    response_json = response.json()
-    assert "assistant" in response_json
-    assert "4" in response_json["assistant"] or "cuatro" and "Jose" and "Tomasa" in response_json["assistant"].lower()
-
 def test_addition():
     """
     Tests the assistant's ability to perform basic arithmetic.
@@ -67,6 +52,21 @@ def test_addition():
     response_json = response.json()
     assert "assistant" in response_json
     assert "4" in response_json["assistant"] or "cuatro" in response_json["assistant"].lower()
+
+def test_check_memory_summary():
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, me llamo Josep"})
+    response.raise_for_status()
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Mi abuela se llama Tomasa"})
+    response.raise_for_status()
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Cuánto es 2+2"})
+    response.raise_for_status()
+    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, como me llamo? Como se llama mi abuela"
+                                                          "y cuanto da la suma anterior?"})
+    response_json = response.json()
+    assert "assistant" in response_json
+    assert "4" in response_json["assistant"] or "cuatro" and "Jose" and "Tomasa" in response_json["assistant"].lower()
+
+
 
 def test_empty_message():
     """
