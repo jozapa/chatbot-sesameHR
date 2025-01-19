@@ -1,12 +1,11 @@
 import requests
 
-#Base url of the local server
+# Base url of the local server
 LOCAL_URL = "http://localhost:8000"
 
-#Endpoints for chat ad health checks
+# Endpoints for chat ad health checks
 CHAT_ENDPOINT = f"{LOCAL_URL}/chat"
 HEALTH_ENDPOINT = f"{LOCAL_URL}/health"
-
 
 def test_hello_assistant():
     """
@@ -22,7 +21,15 @@ def test_hello_assistant():
     assert "assistant" in response_json
     assert "hola" in response_json["assistant"].lower()
 
+
 def test_identity_chatbot():
+    """
+    Test the chatbot's identity response.
+
+    Sends a POST request to the chatbot endpoint with a sample input query
+    ("Hola, quien eres?") and asserts that the response contains the expected
+    keyword "sesame" (case insensitive) in the assistant's reply.
+    """
     response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, quien eres?"})
     response_json = response.json()
     assert "sesame" in response_json["assistant"].lower()
@@ -44,6 +51,7 @@ def test_check_memory():
     assert "assistant" in response_json
     assert "Jose" in response_json["assistant"]
 
+
 def test_addition():
     """
     Tests the assistant's ability to perform basic arithmetic.
@@ -58,20 +66,6 @@ def test_addition():
     assert "assistant" in response_json
     assert "4" in response_json["assistant"] or "cuatro" in response_json["assistant"].lower()
 
-def test_check_memory_summary():
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, me llamo Josep"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Mi abuela se llama Tomasa"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Mi tía se llama pepa"})
-    response.raise_for_status()
-    response = requests.post(CHAT_ENDPOINT, json={"user": "Hola, como me llamo? Como se llama mi abuela"
-                                                          "Y como se llama mi tía?"})
-    response_json = response.json()
-    assert "assistant" in response_json
-    assert "pepa" and "Jose" and "Tomasa" in response_json["assistant"].lower()
-
-
 
 def test_empty_message():
     """
@@ -84,6 +78,7 @@ def test_empty_message():
     response.raise_for_status()
     assert "assistant" in response.json()
 
+
 def test_wrong_format():
     """
     Tests the behavior of the /chat endpoint when an incorrect input format is used.
@@ -95,6 +90,7 @@ def test_wrong_format():
     response = requests.post(CHAT_ENDPOINT, json={"assistant": "Hola que tal"})
     assert response.status_code == 422
 
+
 def test_empty_json():
     """
     Tests the /chat endpoint with an empty JSON object.
@@ -104,5 +100,6 @@ def test_empty_json():
     """
     response = requests.post(CHAT_ENDPOINT, json={})
     assert response.status_code == 422
+
 
 

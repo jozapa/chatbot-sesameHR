@@ -20,7 +20,7 @@ The purpose of this module is to provide a robust and scalable framework for:
    A workflow is defined with logic to process messages and summarize conversations.
 - **State management**:
    At each stage, messages and transitions are processed according to the context and user interactions.
-- **Resumen y Optimización**:
+- **Summarize and Optimization**:
    Old messages are cleaned up and a summary is generated to optimize memory usage without losing the context of the conversation.
 
 ### Main features
@@ -92,15 +92,9 @@ Implements the logic of the FastAPI app. It manages the configuration of the API
     python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
   ```
 
-
-3. Excecute in a terminal inside the `src`folder:
-```bash
-   python api/main.py
-```
-
 3. Use the cmd to interact with the bot:
 
-**Post example**:
+**/chat example**:
    ```cURL
    curl --location 'http://localhost:8000/chat' \
 --header 'Content-Type: application/json' \
@@ -112,12 +106,15 @@ You will get a response similar to:
 ```cURL
 {"assistant":"¡Hola de nuevo! ¿Cómo puedo asistirte hoy?"}
 ```
-**Get example**:
+**/health example**:
    ```cURL
 curl --location 'http://localhost:8000/health' 
    ```
 You will get this response:
+```cURL
 {"health":"healthy"}
+```
+
 ### **Docker execution**
 1.  Make sure you have the imaged installed.
 2.  Run the image:
@@ -136,6 +133,8 @@ I added tests to validate the functionality of the `/chat` and `/health`API endp
 ```bash
   pytest test -v
    ``` 
+### **Note**:
+Please, if you are running with the container, stop it. But you need the image.
 # 🚀 **Next Steps**  
 ## Adding streaming implementation
 
@@ -145,7 +144,10 @@ To do token to token streaming, a `RunnableConfig` must be added when invoking t
 #RunnableConfig is needed for streaming token
 from langchain_core.runnables import RunnableConfig
 
-    def _call_model(self, state: State, config: RunnableConfig): #Adding the runnable config to stream mode
+from langchain_core.messages import SystemMessage, HumanMessage
+from services.chatbot import ChatbotService
+from prompts.chatbot_prompts import INITIAL_MSG_FIRST_STATE_TRUE
+    def _call_model(self, state: ChatbotService.State, config: RunnableConfig): #Adding the runnable config to stream mode
         """
         Invokes the language model to process the current conversation state.
         :param state: the current conversation state.
@@ -209,5 +211,8 @@ The output of `generate_response` will have this structure:
 {'chunk': AIMessageChunk(content='?', additional_kwargs={}, response_metadata={}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
 {'chunk': AIMessageChunk(content='', additional_kwargs={}, response_metadata={'finish_reason': 'stop', 'model_name': 'gpt-3.5-turbo-0125'}, id='run-1bef6153-1047-4e30-87ec-6326d4ca2945')}
 ```
+## Adding different threads IDs
+The memory class currently only handles one thread id with id =1. In a next step we would have to implement a logic to be able to change that id in order to have different users, each with their own specific memory id.
 
-
+## Using a better model
+Currently I am using the gpt 3.5 turbo for decreasing tha API cost, a good practice is use the last model from Open AI gpt4-turbo for a better performance.

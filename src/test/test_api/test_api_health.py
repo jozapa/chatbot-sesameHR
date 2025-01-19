@@ -1,9 +1,9 @@
 import requests
 
-#Base url of the local server
+# Base url of the local server
 LOCAL_URL = "http://localhost:8000"
 
-#Endpoints for chat ad health checks
+# Endpoints for chat ad health checks
 CHAT_ENDPOINT = f"{LOCAL_URL}/chat"
 HEALTH_ENDPOINT = f"{LOCAL_URL}/health"
 
@@ -18,6 +18,7 @@ def test_get_health():
     response = requests.get(HEALTH_ENDPOINT)
     response.raise_for_status()
     assert response.json() == {"health": "healthy"}
+
 
 def test_wrong_post_health():
     """

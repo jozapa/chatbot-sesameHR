@@ -1,5 +1,4 @@
 from langchain_core.messages import SystemMessage, RemoveMessage
-from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
 from langgraph.graph import START, StateGraph, END
@@ -87,7 +86,7 @@ class ChatbotService:
 
         messages = state["messages"] + [SystemMessage(content=summary_message)]
         response = self.llm.invoke(messages)
-        delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][1:-2]]
+        delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
 
         return {"summary": response.content, "messages": delete_messages}
 

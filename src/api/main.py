@@ -1,16 +1,16 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
+
 from api.chat import Assistant
 
-#Load the OpenAI api key
+# Load the OpenAI api key
 load_dotenv()
 
-#Initialize the assistant.
+# Initialize the assistant.
 assistant = Assistant()
 
-#Initialize the FastAPI app.
+# Initialize the FastAPI app.
 app = FastAPI()
 
 
@@ -51,7 +51,6 @@ async def generate_response_endpoint(user_request: UserInput):
     return AssistantResponse(assistant=assistant_message)
 
 
-# Endpoint GET /health
 @app.get("/health")
 async def health():
     """

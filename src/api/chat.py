@@ -2,8 +2,8 @@ from services.chatbot import ChatbotService
 from services.memory import MemoryService
 from langchain_core.messages import HumanMessage
 
+
 class Assistant:
-    # TODO: Docstrings
     """
     Represents an AI assistant that generates responses to users using a chatbot with memory
     configuration.
